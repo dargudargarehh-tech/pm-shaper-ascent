@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #050a0f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+}
+
+#ui-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    color: #00ffcc;
+    padding: 20px;
+    text-shadow: 2px 2px #000;
+}
+
+#mission-log {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: right;
+    background: rgba(0, 255, 204, 0.1);
+    padding: 15px;
+    border-right: 4px solid #00ffcc;
+    min-width: 250px;
+}
+
+.log-header {
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#main-task {
+    color: #00ffcc;
+    margin-top: 5px;
+}
+
+#side-task {
+    color: #ffcc00;
+    font-size: 0.9em;
+    margin-top: 8px;
+    border-top: 1px solid rgba(255, 204, 0, 0.3);
+    padding-top: 5px;
+}
+
+#notifier {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffcc;
+    color: #050a0f;
+    padding: 10px 30px;
+    font-weight: bold;
+    display: none;
+    letter-spacing: 2px;
+}
+
+#msg-box {
+    color: #00ffcc;
+    text-align: center;
+    z-index: 101;
+    background: rgba(5, 10, 15, 0.95);
+    padding: 60px;
+    border: 3px solid #00ffcc;
+    box-shadow: 0 0 50px rgba(0, 255, 204, 0.2);
+}
+
+#msg-box h1 {
+    letter-spacing: 10px;
+    margin: 0;
+}
+
+#msg-box p {
+    color: #fff;
+    font-style: italic;
+    margin: 20px 0 40px;
+}
+
+#start {
+    padding: 15px 40px;
+    background: none;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transition: 0.3s;
+}
+
+#start:hover {
+    background: #00ffcc;
+    color: #050a0f;
+}
+
+#c {
+    display: block;
+}
