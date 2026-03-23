@@ -2,17 +2,19 @@ const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const startBtn = document.getElementById('start');
 const msgBox = document.getElementById('msg-box');
+const uiLayer = document.getElementById('ui-layer');
 const stats = document.getElementById('stats');
 const mainTask = document.getElementById('main-task');
 const sideTask = document.getElementById('side-task');
 const notify = document.getElementById('notifier');
 
+// 1. ENGINE CONFIG
 const config = { gravity: 0.45, speed: 9, jump: -12, doubleJump: -10 };
 let worldX = 0, score = 0, frame = 0, distance = 0;
 const player = { x: 350, y: 100, w: 30, h: 52, vx: 0, vy: 0, grounded: false, dir: 1, anim: 0, jumpsLeft: 2 };
 const platforms = [], shards = [], keys = {};
 
-// MISSION SYSTEM
+// 2. INFINITE MISSION SYSTEM
 const missions = {
     main: [
         { text: "Reach the 500m Mark", goal: 500, type: "dist" },
@@ -41,7 +43,7 @@ function triggerNotify(txt) {
 function generateLevel() {
     platforms.push({x: -500, y: 550, w: 2000, h: 600}); 
     let lastX = 1500, lastY = 550;
-    for(let i=1; i<2000; i++) {
+    for(let i=1; i<2500; i++) {
         let pWidth = 350 + Math.random() * 300, gap = 400 + (Math.random() * 300); 
         let newY = Math.max(250, Math.min(750, lastY + ((Math.random() - 0.5) * 320)));
         platforms.push({ x: lastX + gap, y: newY, w: pWidth, h: 30 });
@@ -50,6 +52,7 @@ function generateLevel() {
     }
 }
 
+// 3. INPUTS
 window.onkeydown = e => {
     if (!keys[e.code]) {
         if ((e.code === 'Space' || e.code === 'ArrowUp') && player.jumpsLeft > 0) {
@@ -62,6 +65,7 @@ window.onkeydown = e => {
 };
 window.onkeyup = e => keys[e.code] = false;
 
+// 4. CORE LOOP
 function update() {
     frame++;
     if (keys['ArrowRight'] || keys['KeyD']) { player.vx = config.speed; player.dir = 1; }
@@ -79,17 +83,16 @@ function update() {
         }
     });
 
-    // INFINITE MISSION PROGRESSION
+    // MISSION PROGRESSION
     let m = missions.main[currentMainIdx];
     if (m) {
         let cleared = (m.type === "dist" && distance >= m.goal) || (m.type === "shard" && score >= m.goal);
         if (cleared) { 
             currentMainIdx++; 
             triggerNotify("MAIN OBJECTIVE CLEAR");
-            // Endless Generator: If we run out of missions, create a new one
             if (currentMainIdx >= missions.main.length) {
                 let nextGoal = distance + 1500;
-                missions.main.push({ text: `Explore Deep Sector ${missions.endlessCount} (${nextGoal}m)`, goal: nextGoal, type: "dist" });
+                missions.main.push({ text: `Expedition Sector ${missions.endlessCount} (${nextGoal}m)`, goal: nextGoal, type: "dist" });
                 missions.endlessCount++;
             }
         }
@@ -99,14 +102,14 @@ function update() {
     let sideCleared = (s.type === "jump" && s.count >= s.goal) || (s.type === "shard_plus" && score >= s.goal) || (s.type === "dist_plus" && distance >= s.goal);
     if (sideCleared) { triggerNotify("SIDE MISSION COMPLETE"); createNewSideMission(); }
 
-    // RENDER
+    // DRAWING
     ctx.fillStyle = '#050a0f'; ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Parallax
+    // Zelda-Style Parallax Mountains
     ctx.fillStyle = '#05101a';
     for(let i=0; i<6; i++) {
-        let x = (i * 600 + worldX * 0.15) % (canvas.width + 600);
-        ctx.beginPath(); ctx.moveTo(x - 400, canvas.height); ctx.lineTo(x, canvas.height - 350); ctx.lineTo(x + 400, canvas.height); ctx.fill();
+        let x = (i * 700 + worldX * 0.15) % (canvas.width + 700);
+        ctx.beginPath(); ctx.moveTo(x - 450, canvas.height); ctx.lineTo(x, canvas.height - 350); ctx.lineTo(x + 450, canvas.height); ctx.fill();
     }
 
     platforms.forEach(p => {
@@ -123,7 +126,7 @@ function update() {
         }
     });
 
-    // DRAW SHAPER
+    // THE SHAPER (Classic Animated Silhouette)
     ctx.save(); ctx.translate(player.x + 15, player.y + 50);
     if(Math.abs(player.vx) > 0 && player.grounded) { player.anim += 0.2; ctx.translate(0, Math.abs(Math.cos(player.anim)) * -4); }
     ctx.scale(player.dir, 1); ctx.translate(-15, -50);
@@ -144,11 +147,16 @@ function update() {
     requestAnimationFrame(update);
 }
 
+// 5. INITIALIZE
 startBtn.onclick = () => {
-    msgBox.style.display = 'none';
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    generateLevel();
-    createNewSideMission();
-    update();
+    msgBox.style.opacity = '0';
+    setTimeout(() => {
+        msgBox.style.display = 'none';
+        uiLayer.style.display = 'block';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        generateLevel();
+        createNewSideMission();
+        update();
+    }, 1000); // Waits for fade out
 };
